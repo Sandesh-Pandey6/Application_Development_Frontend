@@ -24,8 +24,8 @@ const LandingPage = () => {
           <a href="#" className="font-medium text-sm text-slate-500 hover:text-primary transition-colors">About</a>
         </div>
         <div className="hidden md:flex items-center gap-6">
-          <Link to="/login" className="font-semibold text-sm text-primary bg-transparent border-none">Log in</Link>
-          <Link to="/register" className="bg-primary hover:bg-secondary text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center gap-2">
+          <Link to="/customer/login" className="font-semibold text-sm text-primary bg-transparent border-none">Log in</Link>
+          <Link to="/customer/register" className="bg-primary hover:bg-secondary text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center gap-2">
             Get Started
           </Link>
         </div>
@@ -46,7 +46,7 @@ const LandingPage = () => {
             Genuine parts, expert service, AI-powered diagnostics — all in one clean platform. Trusted by 5,000+ vehicle owners across Nepal.
           </p>
           <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-16">
-            <Link to="/register" className="bg-primary hover:bg-secondary text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center gap-2">
+            <Link to="/customer/register" className="bg-primary hover:bg-secondary text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center gap-2">
               Get Started Free
               <ArrowRight size={16} />
             </Link>
