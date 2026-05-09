@@ -1,9 +1,18 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+
 import LandingPage from './pages/LandingPage';
 import CustomerRegisterPage from './pages/customer/RegisterPage';
 import StaffRegisterPage from './pages/staff/RegisterPage';
 import UnifiedLoginPage from './pages/auth/LoginPage';
+
+// Customer features
+import BookAppointment from './pages/customer/appointments/BookAppointment';
+import AppointmentHistory from './pages/customer/appointments/AppointmentHistory';
+import RequestPart from './pages/customer/parts/RequestPart';
+import PartRequestHistory from './pages/customer/parts/PartRequestHistory';
+import AddReview from './pages/customer/reviews/AddReview';
+import PurchaseHistory from './pages/customer/history/PurchaseHistory';
 
 function App() {
   return (
@@ -11,11 +20,18 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          
+
           {/* Registration Routes */}
           <Route path="/customer/register" element={<CustomerRegisterPage />} />
           <Route path="/staff/register" element={<StaffRegisterPage />} />
-          {/* Note: Admin register is not yet implemented but login supports routing to it */}
+
+          {/* Customer Routes */}
+          <Route path="/customer/book-appointment" element={<BookAppointment />} />
+          <Route path="/customer/appointments" element={<AppointmentHistory />} />
+          <Route path="/customer/request-part" element={<RequestPart />} />
+          <Route path="/customer/part-requests" element={<PartRequestHistory />} />
+          <Route path="/customer/add-review" element={<AddReview />} />
+          <Route path="/customer/history" element={<PurchaseHistory />} />
 
           {/* Unified Login Routes */}
           <Route path="/customer/login" element={<UnifiedLoginPage />} />
@@ -24,7 +40,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
