@@ -9,3 +9,8 @@ export const getPartsData = async () => {
   const response = await axiosInstance.get('/Admin/parts');
   return response.data;
 };
+
+export const getStaffData = async () => {
+  const response = await axiosInstance.get('/Admin/staff');
+  return response.data;
+};
