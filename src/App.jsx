@@ -9,6 +9,9 @@ import AdminLayout from './layout/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PartsInventory from './pages/admin/PartsInventory';
 import StaffManagement from './pages/admin/StaffManagement';
+import PurchaseInvoices from './pages/admin/PurchaseInvoices';
+import FinancialReports from './pages/admin/FinancialReports';
+import InventoryReports from './pages/admin/InventoryReports';
 
 // Customer features
 import BookAppointment from './pages/customer/appointments/BookAppointment';
@@ -48,6 +51,9 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="parts" element={<PartsInventory />} />
             <Route path="staff" element={<StaffManagement />} />
+            <Route path="invoices" element={<PurchaseInvoices />} />
+            <Route path="financial-reports" element={<FinancialReports />} />
+            <Route path="inventory-reports" element={<InventoryReports />} />
             {/* Other admin routes can be added here */}
           </Route>
         </Routes>
