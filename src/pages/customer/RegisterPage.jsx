@@ -9,10 +9,12 @@ import { useAuth } from '../../hooks/useAuth';
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
-  const { register } = useAuth();
+  const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
+  const [otpError, setOtpError] = useState('');
+  const [otpSuccess, setOtpSuccess] = useState('');
+  const { register, verifyEmail, resendEmail } = useAuth();
   const navigate = useNavigate();
 
-  // Form State
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -40,19 +42,67 @@ const RegisterPage = () => {
     setStep(2);
   };
 
-  const handleBack = () => {
-    setStep(1);
-  };
-
+  const handleBack = () => setStep(1);
+  
   const handleRegister = async (e) => {
-    e.preventDefault();
-    await register({ role: 'Customer', ...formData });
+  e.preventDefault();
+  console.log('📤 Sending register data:', { role: 'Customer', ...formData });
+  const result = await register({ role: 'Customer', ...formData });
+  console.log('📥 Register result:', result);
+  if (result.success) {
     setShowVerifyModal(true);
-  };
+    setOtpError('');
+  } else {
+    alert(result.error);
+  }
+};
+  /*const handleRegister = async (e) => {
+    e.preventDefault();
+    const result = await register({ role: 'Customer', ...formData });
+    if (result.success) {
+      setShowVerifyModal(true);
+      setOtpError('');
+    } else {
+      alert(result.error);
+    }
+  };*/
 
   const handleRoleSwitch = (role) => {
-    if (role === 'Staff') {
-      navigate('/staff/register');
+    if (role === 'Staff') navigate('/staff/register');
+  };
+
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...otpCode];
+    newOtp[index] = value;
+    setOtpCode(newOtp);
+    if (value && index < 5) {
+      document.getElementById(`otp-${index + 1}`).focus();
+    }
+  };
+
+  const handleVerify = async () => {
+    const code = otpCode.join('');
+    if (code.length !== 6) {
+      setOtpError('Please enter the full 6-digit code.');
+      return;
+    }
+    const result = await verifyEmail(formData.email, code);
+    if (result.success) {
+      setOtpSuccess('Email verified! Redirecting to login...');
+      setTimeout(() => navigate('/customer/login'), 2000);
+    } else {
+      setOtpError(result.error);
+    }
+  };
+
+  const handleResend = async () => {
+    const result = await resendEmail(formData.email);
+    if (result.success) {
+      setOtpError('');
+      setOtpSuccess('New code sent to your email!');
+    } else {
+      setOtpError(result.error);
     }
   };
 
@@ -60,7 +110,10 @@ const RegisterPage = () => {
     <AuthLayout variant="customer">
       <div className="flex justify-end mb-16">
         <p className="text-sm text-slate-500">
-          Already have an account? <Link to="/customer/login" className="font-bold text-[#0F172A] hover:underline flex items-center gap-1 inline-flex">Sign In <ArrowRight size={14} /></Link>
+          Already have an account?{' '}
+          <Link to="/customer/login" className="font-bold text-[#0F172A] hover:underline flex items-center gap-1 inline-flex">
+            Sign In <ArrowRight size={14} />
+          </Link>
         </p>
       </div>
 
@@ -82,7 +135,7 @@ const RegisterPage = () => {
           )}
         </div>
 
-        {/* Progress Indicator */}
+        {/* Progress */}
         <div className="mb-10">
           <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2">
             <span>Step {step} of 2</span>
@@ -103,23 +156,16 @@ const RegisterPage = () => {
           </div>
         </div>
 
-        {/* Step 1 Form */}
+        {/* Step 1 */}
         {step === 1 && (
           <form onSubmit={handleNext} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-700">Role</label>
               <div className="flex gap-4">
-                <button 
-                  type="button" 
-                  className="flex-1 py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-semibold transition-all bg-[#0F172A] text-white border-[#0F172A]"
-                >
+                <button type="button" className="flex-1 py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-semibold bg-[#0F172A] text-white border-[#0F172A]">
                   <User size={16} /> Customer
                 </button>
-                <button 
-                  type="button" 
-                  onClick={() => handleRoleSwitch('Staff')}
-                  className="flex-1 py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-semibold transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                >
+                <button type="button" onClick={() => handleRoleSwitch('Staff')} className="flex-1 py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-semibold bg-white text-slate-600 border-slate-200 hover:border-slate-300">
                   <ShieldCheck size={16} /> Staff
                 </button>
               </div>
@@ -190,10 +236,9 @@ const RegisterPage = () => {
           </form>
         )}
 
-        {/* Step 2 Form */}
+        {/* Step 2 */}
         {step === 2 && (
           <form onSubmit={handleRegister} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-4 items-center mb-6">
               <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-500">
                 <CarFront size={20} />
@@ -264,56 +309,61 @@ const RegisterPage = () => {
         )}
       </div>
 
-      {/* Verify Email Modal */}
+      {/* OTP Modal */}
       {showVerifyModal && (
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
-            <button 
-              onClick={() => setShowVerifyModal(false)}
-              className="absolute right-6 top-6 text-slate-400 hover:text-slate-600"
-            >
+            <button onClick={() => setShowVerifyModal(false)} className="absolute right-6 top-6 text-slate-400 hover:text-slate-600">
               <X size={20} />
             </button>
-            
+
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-[#0F172A] rounded-2xl flex items-center justify-center text-white mb-6">
                 <div className="relative">
                   <Mail size={32} />
                   <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-0.5">
-                    <CheckCircle size={14} className="text-[#0F172A] fill-[#0F172A] text-white" />
+                    <CheckCircle size={14} className="text-[#0F172A]" />
                   </div>
                 </div>
               </div>
-              
+
               <h2 className="text-3xl font-extrabold text-[#0F172A] mb-2">Verify Your Email</h2>
               <p className="text-slate-500 mb-1">We sent a 6-digit code to</p>
               <p className="font-bold text-[#0F172A] mb-8">{formData.email}</p>
-              
+
               <p className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">ENTER 6-DIGIT CODE</p>
-              
+
               <div className="flex gap-2 justify-center mb-6 w-full">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <input 
-                    key={i} 
-                    type="text" 
-                    maxLength={1} 
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <input
+                    key={i}
+                    id={`otp-${i}`}
+                    type="text"
+                    maxLength={1}
+                    value={otpCode[i]}
+                    onChange={(e) => handleOtpChange(i, e.target.value)}
                     className="w-12 h-14 border-2 border-slate-200 rounded-xl text-center text-2xl font-bold text-[#0F172A] focus:border-[#0F172A] focus:outline-none focus:ring-0"
                   />
                 ))}
               </div>
-              
+
+              {otpError && <p className="text-red-500 text-sm mb-4">{otpError}</p>}
+              {otpSuccess && <p className="text-green-500 text-sm mb-4">{otpSuccess}</p>}
+
               <p className="text-sm text-slate-500 mb-8">Code expires in <span className="font-bold text-[#0F172A]">10 minutes</span></p>
-              
-              <button className="w-full bg-[#0F172A] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors mb-6">
+
+              <button onClick={handleVerify} className="w-full bg-[#0F172A] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors mb-6">
                 <CheckCircle size={18} /> Verify & Activate Account
               </button>
-              
+
               <p className="text-sm text-slate-500 mb-8">
-                Didn't receive it? <button className="font-bold text-[#0F172A] hover:underline inline-flex items-center gap-1"><RefreshCw size={14} /> Resend</button>
+                Didn't receive it?{' '}
+                <button onClick={handleResend} className="font-bold text-[#0F172A] hover:underline inline-flex items-center gap-1">
+                  <RefreshCw size={14} /> Resend
+                </button>
               </p>
-              
+
               <div className="w-full h-px bg-slate-100 mb-6"></div>
-              
               <p className="text-xs text-slate-400 flex items-center justify-center gap-1.5">
                 <ShieldCheck size={14} /> Secured with email verification
               </p>

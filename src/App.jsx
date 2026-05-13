@@ -4,6 +4,8 @@ import LandingPage from './pages/LandingPage';
 import CustomerRegisterPage from './pages/customer/RegisterPage';
 import StaffRegisterPage from './pages/staff/RegisterPage';
 import UnifiedLoginPage from './pages/auth/LoginPage';
+import AdminLayout from './layout/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
@@ -21,6 +23,13 @@ function App() {
           <Route path="/customer/login" element={<UnifiedLoginPage />} />
           <Route path="/staff/login" element={<UnifiedLoginPage />} />
           <Route path="/admin/login" element={<UnifiedLoginPage />} />
+
+          {/* Admin Dashboard Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            {/* Other admin routes can be added here */}
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
