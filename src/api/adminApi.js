@@ -30,4 +30,10 @@ export const getInventoryReportData = async () => {
   return response.data;
 };
 
+export const getNotificationsData = async () => {
+  const response = await axiosInstance.get('/Admin/notifications');
+  return response.data;
+};
+
+
 

@@ -12,6 +12,7 @@ import StaffManagement from './pages/admin/StaffManagement';
 import PurchaseInvoices from './pages/admin/PurchaseInvoices';
 import FinancialReports from './pages/admin/FinancialReports';
 import InventoryReports from './pages/admin/InventoryReports';
+import Notifications from './pages/admin/Notifications';
 
 // Customer features
 import BookAppointment from './pages/customer/appointments/BookAppointment';
@@ -54,6 +55,7 @@ function App() {
             <Route path="invoices" element={<PurchaseInvoices />} />
             <Route path="financial-reports" element={<FinancialReports />} />
             <Route path="inventory-reports" element={<InventoryReports />} />
+            <Route path="notifications" element={<Notifications />} />
             {/* Other admin routes can be added here */}
           </Route>
         </Routes>
