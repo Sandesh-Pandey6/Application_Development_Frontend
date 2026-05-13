@@ -7,6 +7,7 @@ import StaffRegisterPage from './pages/staff/RegisterPage';
 import UnifiedLoginPage from './pages/auth/LoginPage';
 import AdminLayout from './layout/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import PartsInventory from './pages/admin/PartsInventory';
 
 // Customer features
 import BookAppointment from './pages/customer/appointments/BookAppointment';
@@ -44,6 +45,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="parts" element={<PartsInventory />} />
             {/* Other admin routes can be added here */}
           </Route>
         </Routes>
